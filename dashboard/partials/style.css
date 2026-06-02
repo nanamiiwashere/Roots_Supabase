@@ -8005,3 +8005,67 @@ body.customer-modal-open {
         border-color: #d6dde4;
     }
 }
+
+/* ===== Auth Provider Badge ===== */
+.user-auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    line-height: 1;
+}
+
+.auth-badge-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+/* Email */
+.user-auth-badge--email {
+    background: #e8f4fd;
+    color: #2b7fc1;
+    stroke: #2b7fc1;
+}
+.user-auth-badge--email .auth-badge-icon {
+    stroke: #2b7fc1;
+}
+
+/* Google */
+.user-auth-badge--google {
+    background: #f5f5f5;
+    color: #444;
+}
+.user-auth-badge--google .auth-badge-icon {
+    width: 13px;
+    height: 13px;
+}
+
+/* Discord */
+.user-auth-badge--discord {
+    background: #eaebff;
+    color: #5865f2;
+}
+.user-auth-badge--discord .auth-badge-icon {
+    fill: #5865f2;
+}
+
+/* Facebook */
+.user-auth-badge--facebook {
+    background: #e7f0fd;
+    color: #1877f2;
+}
+.user-auth-badge--facebook .auth-badge-icon {
+    fill: #1877f2;
+}
+
+/* Hide auth badge text when sidebar collapsed */
+.dashboard-sidebar.is-collapsed .user-auth-badge {
+    display: none;
+}
