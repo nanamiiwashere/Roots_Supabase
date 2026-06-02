@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="42" viewBox="0 0 140 42" role="img" aria-labelledby="title desc">
+    <title id="title">Roots</title>
+    <desc id="desc">Roots logo in mint green.</desc>
+    <g fill="#54D9AA">
+        <path d="M5.4 27.6h7.1l4.6-13.1h-7L5.4 27.6Z"/>
+        <path d="M16.1 27.6h6.8l2.7-7.2 2.7 7.2h7.1l-6.2-15.5h-7L16.1 27.6Z"/>
+        <path d="M33.8 27.6h7L36 14.5h-7l4.8 13.1Z"/>
+    </g>
+    <text x="47" y="27.3" fill="#54D9AA" font-family="Inter, Poppins, Avenir Next, Segoe UI, Arial, sans-serif" font-size="21" font-weight="800" letter-spacing="0">Roots</text>
+</svg>
