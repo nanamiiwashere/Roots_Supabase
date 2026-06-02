@@ -1,7 +1,7 @@
 <?php
 require_once 'auth3thparty.php';
 require_once __DIR__ . '/../connect.php';
-require_once '../auth/turnstile.php';
+require_once './auth/turnstile.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
