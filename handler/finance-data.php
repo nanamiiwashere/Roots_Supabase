@@ -35,24 +35,7 @@ function financeStatusLabel(string $status): string
 /**
  * Create the finance_transactions table if it doesn't already exist.
  */
-function ensureFinanceTable(PDO $pdo): void
-{
-    $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS `finance_transactions` (
-            `id` INT(11) NOT NULL AUTO_INCREMENT,
-            `workspace_id` INT(11) NOT NULL,
-            `tx_code` VARCHAR(50) NOT NULL,
-            `title` VARCHAR(255) NOT NULL,
-            `type` ENUM('income','expense') NOT NULL DEFAULT 'income',
-            `amount` DECIMAL(18,2) NOT NULL DEFAULT 0,
-            `status` ENUM('success','pending') NOT NULL DEFAULT 'success',
-            `tx_date` DATE DEFAULT NULL,
-            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`),
-            INDEX `idx_fin_ws` (`workspace_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
-    );
-}
+
 
 /**
  * Summary figures for the balance / income / expense cards.
