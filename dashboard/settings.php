@@ -43,8 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 $stmt = $pdo->prepare('UPDATE users SET name = ?, phone = ? WHERE id_user = ?');
-                $stmt->execute([$name, $phone, $currentUser['id_user']]);
-                
+                $stmt->execute([
+                    $name, 
+                    (!empty($phone) ? $phone : null), 
+                    (int)$currentUser['id_user']
+                ]);
+                            
                 // Update session so name change is reflected immediately
                 $_SESSION['user_name'] = $name;
                 
