@@ -69,7 +69,7 @@ if (!$user) {
 
     } else {
         $pdo->prepare("
-            INSERT INTO users (nama, email, avatar, oauth_provider, oauth_uid, role)
+            INSERT INTO users (name, email, avatar, oauth_provider, oauth_uid, role)
             VALUES (?, ?, ?, 'google', ?, 'user')
         ")->execute([
             $googleUser['name'],
