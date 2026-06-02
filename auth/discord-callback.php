@@ -19,7 +19,7 @@ $tokenResponse = file_get_contents('https://discord.com/api/oauth2/token', false
         'client_secret' => DISCORD_CLIENT_SECRET,
         'grant_type' => 'authorization_code',
         'code' => $code,
-        'redirect_url' => DISCORD_REDIRECT_URL
+        'redirect_uri' => DISCORD_REDIRECT_URI
         ]),
     ]])
 );
