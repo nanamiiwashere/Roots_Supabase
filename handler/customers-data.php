@@ -10,6 +10,24 @@
 /**
  * Create the customers table if it doesn't already exist.
  */
+function ensureCustomersTable(PDO $pdo): void
+{
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `customers` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `name` VARCHAR(255) NOT NULL,
+            `email` VARCHAR(255) DEFAULT NULL,
+            `total_purchase` DECIMAL(18,2) NOT NULL DEFAULT 0,
+            `last_transaction` DATE DEFAULT NULL,
+            `segment` ENUM('new','regular') NOT NULL DEFAULT 'new',
+            `contacted` TINYINT(1) NOT NULL DEFAULT 1,
+            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            INDEX `idx_cust_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+}
 
 /**
  * Seed demo customers for a workspace when none exist yet.

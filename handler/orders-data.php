@@ -29,6 +29,35 @@ function orderStatusLabel(string $status): string
 /**
  * Create the orders table if it doesn't already exist.
  */
+function ensureOrdersTable(PDO $pdo): void
+{
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `orders` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `order_code` VARCHAR(50) NOT NULL,
+            `customer_name` VARCHAR(255) NOT NULL,
+            `item` VARCHAR(255) DEFAULT NULL,
+            `quantity` INT(11) NOT NULL DEFAULT 1,
+            `price` DECIMAL(18,2) NOT NULL DEFAULT 0,
+            `status` ENUM('on_progress','on_hold','pending_payment','delivered','cancelled') NOT NULL DEFAULT 'on_progress',
+            `order_date` DATE DEFAULT NULL,
+            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            INDEX `idx_ord_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+
+    // Migration: add `quantity` for tables created before this column existed.
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM `orders` LIKE 'quantity'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `quantity` INT(11) NOT NULL DEFAULT 1 AFTER `item`");
+        }
+    } catch (Exception $e) {
+        // Ignore: if SHOW/ALTER fails the table is already current or unavailable.
+    }
+}
 
 /**
  * Aggregate stats for the four cards at the top of the page.

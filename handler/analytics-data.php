@@ -21,6 +21,76 @@
 /**
  * Create analytics tables if they don't already exist.
  */
+function ensureAnalyticsTables(PDO $pdo): void
+{
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `analytics_metrics` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `metric_key` VARCHAR(50) NOT NULL,
+            `metric_value` DECIMAL(18,2) NOT NULL DEFAULT 0,
+            `change_percent` DECIMAL(6,2) DEFAULT NULL,
+            `trend` ENUM('up','down','flat') NOT NULL DEFAULT 'up',
+            `sort_order` INT(11) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uq_am_ws_key` (`workspace_id`, `metric_key`),
+            INDEX `idx_am_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `analytics_monthly` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `month_label` VARCHAR(20) NOT NULL,
+            `sales` INT(11) NOT NULL DEFAULT 0,
+            `revenue` DECIMAL(18,2) NOT NULL DEFAULT 0,
+            `sort_order` INT(11) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`),
+            INDEX `idx_amo_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `analytics_activity` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `title` VARCHAR(255) NOT NULL,
+            `code` VARCHAR(50) DEFAULT NULL,
+            `status` VARCHAR(50) DEFAULT NULL,
+            `activity_type` ENUM('order','finance') NOT NULL DEFAULT 'order',
+            `activity_date` DATE DEFAULT NULL,
+            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            INDEX `idx_aa_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+    
+    // Migration: add activity_type column if not exists
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM `analytics_activity` LIKE 'activity_type'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE `analytics_activity` ADD COLUMN `activity_type` ENUM('order','finance') NOT NULL DEFAULT 'order' AFTER `status`");
+        }
+    } catch (Exception $e) {
+        // Ignore migration errors
+    }
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS `analytics_reviews` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT,
+            `workspace_id` INT(11) NOT NULL,
+            `reviewer_name` VARCHAR(255) NOT NULL,
+            `rating` TINYINT(1) NOT NULL DEFAULT 5,
+            `comment` TEXT DEFAULT NULL,
+            `code` VARCHAR(50) DEFAULT NULL,
+            `review_date` DATE DEFAULT NULL,
+            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            INDEX `idx_ar_ws` (`workspace_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    );
+}
 
 /**
  * Sync orders data to analytics tables for a workspace.
