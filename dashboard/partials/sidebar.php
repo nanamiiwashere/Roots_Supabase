@@ -19,7 +19,7 @@
 $_SESSION['user'] ?? [];
 $displayName = $displayName ?? ($currentUser['name'] ?? 'User');
 $workspaceName = $workspaceName ?? ($workspace['name'] ?? 'My Workspace');
-require_once __DIR__ . '/../handler/supabase-handler.php';
+require_once __DIR__ . '/../../handler/supabase-img.php';
 
 // Handle workspace logo path - ensure correct directory
 if (!empty($workspace['logo'])) {
