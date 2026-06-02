@@ -44,23 +44,6 @@ function inventoryStatusLabel(string $status): string
 /**
  * Create the inventory table if it doesn't already exist.
  */
-function ensureInventoryTable(PDO $pdo): void
-{
-    $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS `inventory` (
-            `id` INT(11) NOT NULL AUTO_INCREMENT,
-            `workspace_id` INT(11) NOT NULL,
-            `sku` VARCHAR(50) NOT NULL,
-            `product_name` VARCHAR(255) NOT NULL,
-            `category` VARCHAR(120) DEFAULT NULL,
-            `stock` INT(11) NOT NULL DEFAULT 0,
-            `price` DECIMAL(18,2) NOT NULL DEFAULT 0,
-            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`),
-            INDEX `idx_inv_ws` (`workspace_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
-    );
-}
 
 /**
  * Aggregate stats for the four cards at the top of the page.
