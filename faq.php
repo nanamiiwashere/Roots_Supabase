@@ -79,7 +79,7 @@ $faqGroups = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ - Roots</title>
     <meta name="description" content="Dokumentasi dan pertanyaan umum Roots ERP untuk billing, subscription, dan onboarding dashboard.">
-    <link rel="icon" href="img/roots_symbol.png?v=<?= filemtime(__DIR__ . '/img/roots_symbol.png'); ?>" type="image/png">
+    <link rel="icon" href="<?= supabaseImageUrl('img/roots_symbol.png'); ?>" type="image/png">
     <link rel="stylesheet" href="style.css?v=<?= filemtime(__DIR__ . '/style.css'); ?>">
 </head>
 <body>
