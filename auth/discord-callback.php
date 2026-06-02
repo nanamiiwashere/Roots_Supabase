@@ -13,7 +13,13 @@ if (!$code) {
 #exchange token
 $tokenResponse = file_get_contents('https://discord.com/api/oauth2/token', false, stream_context_create(['http' => [
     'method' => 'POST',
-    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+    'header' => "Content-Type: application/x-www-form-urlencoded\r\nContent-Length: " . strlen(http_build_query([
+        'client_id' => DISCORD_CLIENT_ID,
+        'client_secret' => DISCORD_CLIENT_SECRET,
+        'grant_type' => 'authorization_code',
+        'code' => $code,
+        'redirect_uri' => DISCORD_REDIRECT_URI
+    ])) . "\r\n",
     'content' => http_build_query([
         'client_id' => DISCORD_CLIENT_ID,
         'client_secret' => DISCORD_CLIENT_SECRET,
