@@ -7,6 +7,7 @@ require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../auth/auth-handler.php';
 require_once __DIR__ . '/../auth/auth3thparty.php';
 require_once __DIR__ . '/../handler/analytics-data.php';
+require_once __DIR__ . '/../handler/supabase-img.php'; // KUNCI: Panggil handler gambar Supabase di sini
 
 // Get current user or redirect to login
 requireLogin();
@@ -126,7 +127,7 @@ $analyticsPayload = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Roots ERP</title>
     <meta name="description" content="Dashboard Roots ERP untuk analytics, customers, orders, inventory, finance, dan reports.">
-    <link rel="icon" href="../img/roots_symbol.png?v=<?= filemtime(__DIR__ . '/../img/roots_symbol.png'); ?>" type="image/png">
+    <link rel="icon" href="<?= supabaseImageUrl('img/roots_symbol.png'); ?>" type="image/png">
     <link rel="stylesheet" href="../dashboard/partials/style.css?v=<?= filemtime(__DIR__ . '/partials/style.css'); ?>">
     <style>
         /* SVG gradient for chart */
@@ -135,7 +136,6 @@ $analyticsPayload = [
 </head>
 <body class="<?= $showSetupModal ? 'workspace-setup-open' : ''; ?>">
     
-    <!-- SVG Defs for gradients -->
     <svg class="chart-gradient-defs" aria-hidden="true">
         <defs>
             <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
@@ -145,19 +145,15 @@ $analyticsPayload = [
         </defs>
     </svg>
 
-    <!-- Main Dashboard -->
     <main class="dashboard-shell" aria-label="Roots dashboard">
         
-        <!-- Sidebar (Partial) -->
         <?php 
         $currentPage = 'analytics';
         include __DIR__ . '/partials/sidebar.php'; 
         ?>
 
-        <!-- Main Content Area -->
         <section class="dashboard-main">
             
-            <!-- Top Bar -->
             <header class="dashboard-topbar">
                 <button class="dashboard-mobile-menu-btn" type="button" aria-label="Open menu" id="mobileMenuBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -176,7 +172,6 @@ $analyticsPayload = [
                         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         <span class="notif-dot"></span>
                     </button>
-                    <!-- Notification Popup -->
                     <div class="notif-popup" id="notifPopup">
                         <div class="notif-popup-header">
                             <strong>Notifications</strong>
@@ -186,7 +181,6 @@ $analyticsPayload = [
                             <p class="notif-empty">No new notifications</p>
                         </div>
                     </div>
-                    <!-- Account Menu -->
                     <div class="topbar-user">
                         <button type="button" class="topbar-avatar-btn" id="topbarAvatar" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">
                             <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8'); ?>" alt="User avatar" class="topbar-avatar">
@@ -213,7 +207,6 @@ $analyticsPayload = [
                 </div>
             </header>
 
-            <!-- Dashboard Content -->
             <div class="dashboard-content">
                 <h1>Welcome, <?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?>!</h1>
 
@@ -223,7 +216,6 @@ $analyticsPayload = [
                     </div>
                 <?php endif; ?>
 
-                <!-- Upgrade Banner -->
                 <section class="dashboard-upgrade">
                     <div class="dashboard-upgrade-text">
                         <span class="dashboard-upgrade-badge">
@@ -236,7 +228,6 @@ $analyticsPayload = [
                     <span class="dashboard-upgrade-decor" aria-hidden="true"></span>
                 </section>
 
-                <!-- Overview -->
                 <div class="analytics-overview-head">
                     <h2>Overview</h2>
                     <button type="button" class="analytics-date-btn" aria-label="Date range">
@@ -244,7 +235,6 @@ $analyticsPayload = [
                     </button>
                 </div>
 
-                <!-- Summary Cards -->
                 <div class="analytics-stats">
                     <article class="analytics-stat-card">
                         <span class="analytics-stat-head">
@@ -291,9 +281,7 @@ $analyticsPayload = [
                     </article>
                 </div>
 
-                <!-- Charts Row -->
                 <div class="analytics-charts">
-                    <!-- Total Sales (bar) -->
                     <article class="analytics-chart-card analytics-chart-sales">
                         <div class="analytics-chart-head">
                             <div>
@@ -314,7 +302,6 @@ $analyticsPayload = [
                         <?php endif; ?>
                     </article>
 
-                    <!-- Total Revenue (area) -->
                     <article class="analytics-chart-card analytics-chart-revenue">
                         <div class="analytics-chart-head">
                             <div>
@@ -336,7 +323,6 @@ $analyticsPayload = [
                     </article>
                 </div>
 
-                <!-- Activity / Reviews / Support -->
                 <div class="analytics-feeds">
                     <article class="dashboard-card activity-card">
                         <h2>Recent Activity</h2>
@@ -418,14 +404,12 @@ $analyticsPayload = [
     </main>
 
     <?php if ($showSetupModal): ?>
-        <!-- Workspace Setup Onboarding Modal -->
         <div class="workspace-setup-modal is-open" id="workspaceSetup" aria-hidden="false">
             <div class="workspace-setup-backdrop" aria-hidden="true"></div>
             
             <section class="workspace-setup-dialog" role="dialog" aria-modal="true" aria-labelledby="setup-title">
-                <!-- Left Panel -->
                 <aside class="workspace-setup-side">
-                    <img src="../img/roots_symbol_white.png" alt="Roots" class="setup-logo">
+                    <img src="<?= supabaseImageUrl('img/roots_symbol_white.png'); ?>" alt="Roots" class="setup-logo">
                     
                     <h2>Set up your<br>workspace.</h2>
                     
@@ -443,15 +427,12 @@ $analyticsPayload = [
                     </ol>
                 </aside>
 
-                <!-- Right Panel - Form -->
                 <form class="workspace-setup-form" id="workspaceSetupForm" action="../handler/workspace-setup.php" method="post" enctype="multipart/form-data">
                     
-                    <!-- Step 1: Organization Details -->
                     <section class="setup-step is-active" data-setup-step="1">
                         <h2 id="setup-title">Organization Name</h2>
                         <p>What's the name of your company or team?</p>
 
-                        <!-- Logo Upload -->
                         <label class="setup-upload" for="workspaceLogo" id="uploadLabel">
                             <input id="workspaceLogo" name="workspace_logo" type="file" accept="image/png,image/jpeg">
                             <span class="upload-icon" id="uploadIcon">
@@ -464,7 +445,6 @@ $analyticsPayload = [
                         </label>
                         <p class="upload-help">Recommended: JPG or PNG<br>Minimum 400x400px</p>
 
-                        <!-- Workspace Name Input -->
                         <label class="setup-label" for="workspaceName">Workspace Name</label>
                         <div class="setup-input">
                             <svg viewBox="0 0 24 24">
@@ -474,12 +454,10 @@ $analyticsPayload = [
                         </div>
                     </section>
 
-                    <!-- Step 2: Industry & Company Size -->
                     <section class="setup-step" data-setup-step="2">
                         <h2>A bit more detail</h2>
                         <p>Help us customize your dashboard experience.</p>
 
-                        <!-- Industry Dropdown -->
                         <label class="setup-label" for="workspaceIndustry">Industry</label>
                         <div class="setup-input setup-select">
                             <svg viewBox="0 0 24 24">
@@ -497,7 +475,6 @@ $analyticsPayload = [
                             </select>
                         </div>
 
-                        <!-- Company Size Radio Buttons -->
                         <fieldset class="company-size">
                             <legend>Company Size</legend>
                             <label>
@@ -519,13 +496,11 @@ $analyticsPayload = [
                         </fieldset>
                     </section>
 
-                    <!-- Error/Success Messages -->
                     <?php if ($setupError): ?>
                         <p class="setup-note is-error"><?= htmlspecialchars($setupError); ?></p>
                     <?php endif; ?>
                     <p class="setup-note" id="workspaceSetupNote"></p>
 
-                    <!-- Navigation Buttons -->
                     <div class="setup-actions">
                         <button class="setup-back" type="button" data-setup-back style="display: none;">Back</button>
                         <button class="setup-continue" type="button" data-setup-next>
@@ -543,7 +518,6 @@ $analyticsPayload = [
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="../script.js?v=<?= filemtime(__DIR__ . '/../script.js'); ?>"></script>
 
-    <!-- Analytics charts -->
     <script>
     (function() {
         if (typeof Chart === 'undefined') return;
@@ -611,7 +585,6 @@ $analyticsPayload = [
     })();
     </script>
     
-    <!-- Workspace Dropdown, User Dropdown & Notification Scripts -->
     <script>
     (function() {
         // === Workspace Dropdown ===
