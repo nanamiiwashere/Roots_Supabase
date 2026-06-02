@@ -20,7 +20,6 @@ function reportsSafeFetchAll(PDO $pdo, string $sql, array $params = []): array
     }
 }
 
-/** Safely fetch a single scalar, returning $default on any failure. */
 function reportsSafeScalar(PDO $pdo, string $sql, array $params = [], $default = 0)
 {
     try {
@@ -33,12 +32,6 @@ function reportsSafeScalar(PDO $pdo, string $sql, array $params = [], $default =
     }
 }
 
-/**
- * Revenue vs Profit for the last 4 weeks (from finance_transactions).
- * revenue = income (success); profit = income - expenses (success).
- *
- * @return array{labels:array,revenue:array,profit:array}
- */
 function getReportRevenueProfit(PDO $pdo, int $workspaceId): array
 {
     $labels  = [];
@@ -53,14 +46,14 @@ function getReportRevenueProfit(PDO $pdo, int $workspaceId): array
             $pdo,
             "SELECT COALESCE(SUM(amount),0) FROM finance_transactions
              WHERE workspace_id = ? AND type='income' AND status='success'
-               AND DATE(COALESCE(tx_date, created_at)) BETWEEN ? AND ?",
+               AND CAST(COALESCE(tx_date, created_at) AS DATE) BETWEEN ? AND ?",
             [$workspaceId, $start, $end]
         );
         $exp = (float) reportsSafeScalar(
             $pdo,
             "SELECT COALESCE(SUM(amount),0) FROM finance_transactions
              WHERE workspace_id = ? AND type='expense' AND status='success'
-               AND DATE(COALESCE(tx_date, created_at)) BETWEEN ? AND ?",
+               AND CAST(COALESCE(tx_date, created_at) AS DATE) BETWEEN ? AND ?",
             [$workspaceId, $start, $end]
         );
 
@@ -72,12 +65,6 @@ function getReportRevenueProfit(PDO $pdo, int $workspaceId): array
     return ['labels' => $labels, 'revenue' => $revenue, 'profit' => $profit];
 }
 
-/**
- * Sales by product (doughnut) derived from orders grouped by item.
- * Returns up to 4 top items by total quantity.
- *
- * @return array{labels:array,values:array,colors:array}
- */
 function getReportSalesByProduct(PDO $pdo, int $workspaceId): array
 {
     $rows = reportsSafeFetchAll(
@@ -106,17 +93,12 @@ function getReportSalesByProduct(PDO $pdo, int $workspaceId): array
     return ['labels' => $labels, 'values' => $values, 'colors' => $colors];
 }
 
-/**
- * Monthly Actual vs Target (last 6 months).
- * actual = monthly income (success); target = average monthly income (benchmark).
- *
- * @return array{labels:array,actual:array,target:array}
- */
 function getReportMonthlyTargets(PDO $pdo, int $workspaceId): array
 {
+    // GANTI: DATE_FORMAT -> TO_CHAR untuk Postgres
     $rows = reportsSafeFetchAll(
         $pdo,
-        "SELECT DATE_FORMAT(COALESCE(tx_date, created_at), '%Y-%m') AS ym, COALESCE(SUM(amount),0) AS total
+        "SELECT TO_CHAR(COALESCE(tx_date, created_at), 'YYYY-MM') AS ym, COALESCE(SUM(amount),0) AS total
          FROM finance_transactions
          WHERE workspace_id = ? AND type='income' AND status='success'
          GROUP BY ym",
@@ -157,20 +139,15 @@ function getReportMonthlyTargets(PDO $pdo, int $workspaceId): array
     ];
 }
 
-/**
- * KPI cards derived from real figures.
- *
- * @return array<int,array{key:string,label:string,value:string,subtitle:string,trend:string}>
- */
 function getReportKpis(PDO $pdo, int $workspaceId): array
 {
-    // --- Annual net growth: net of last 3 months vs the 3 months before. ---
+    // GANTI: INTERVAL 3 MONTH -> INTERVAL '3 months' untuk Postgres
     $recent = (float) reportsSafeScalar(
         $pdo,
         "SELECT COALESCE(SUM(CASE WHEN type='income' THEN amount ELSE -amount END),0)
          FROM finance_transactions
          WHERE workspace_id = ? AND status='success'
-           AND COALESCE(tx_date, created_at) >= (CURRENT_DATE() - INTERVAL 3 MONTH)",
+           AND COALESCE(tx_date, created_at) >= (CURRENT_DATE - INTERVAL '3 months')",
         [$workspaceId]
     );
     $prior = (float) reportsSafeScalar(
@@ -178,10 +155,11 @@ function getReportKpis(PDO $pdo, int $workspaceId): array
         "SELECT COALESCE(SUM(CASE WHEN type='income' THEN amount ELSE -amount END),0)
          FROM finance_transactions
          WHERE workspace_id = ? AND status='success'
-           AND COALESCE(tx_date, created_at) >= (CURRENT_DATE() - INTERVAL 6 MONTH)
-           AND COALESCE(tx_date, created_at) <  (CURRENT_DATE() - INTERVAL 3 MONTH)",
+           AND COALESCE(tx_date, created_at) >= (CURRENT_DATE - INTERVAL '6 months')
+           AND COALESCE(tx_date, created_at) <  (CURRENT_DATE - INTERVAL '3 months')",
         [$workspaceId]
     );
+    
     if (abs($prior) > 0.0001) {
         $growth = (($recent - $prior) / abs($prior)) * 100;
         $growthText = ($growth >= 0 ? '+' : '') . rtrim(rtrim(number_format($growth, 1, ',', '.'), '0'), ',') . '%';
