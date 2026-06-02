@@ -79,7 +79,7 @@ function format_idr_price(int $valueInK): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing - Roots</title>
     <meta name="description" content="Paket harga Roots ERP untuk startup, bisnis berkembang, dan tim yang siap scale.">
-    <link rel="icon" href="img/roots_symbol.png?v=<?= filemtime(__DIR__ . '/img/roots_symbol.png'); ?>" type="image/png">
+    <link rel="icon" href="<?= supabaseImageUrl('img/roots_symbol.png'); ?>" type="image/png">
     <link rel="stylesheet" href="style.css?v=<?= filemtime(__DIR__ . '/style.css'); ?>">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
