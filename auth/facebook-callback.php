@@ -2,6 +2,7 @@
 session_start();
 require_once '../connect.php';
 require_once '../auth/auth3thparty.php'; 
+
 $code = $_GET['code'] ?? '';
 if (!$code) {
     header('Location: ' . APP_URL . '/login.php?error=oauth_failed');
@@ -39,28 +40,45 @@ if (empty($fbUser['email'])) {
 $avatar = $fbUser['picture']['data']['url'] ?? null;
 $name = $fbUser['name'];
 
+// 1. Cek dari Oauth UID
 $stmt = $pdo->prepare("SELECT * FROM users WHERE oauth_uid = ? AND oauth_provider = 'facebook'");
 $stmt->execute([$fbUser['id']]);
-$user = $stmt->fetch();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$user){ 
-    
+if (!$user) { 
+    // 2. Cek dari Email
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?"); 
     $stmt->execute([$fbUser['email']]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user){
+    if ($user) {
         $pdo->prepare("UPDATE users SET avatar = ?, oauth_provider = 'facebook', oauth_uid = ? WHERE id_user = ?")
             ->execute([$avatar, $fbUser['id'], $user['id_user']]);
     } else {
-        $pdo->prepare("INSERT INTO users (name, email, avatar, oauth_provider, oauth_uid, role) VALUES (?, ?, ?, 'facebook', ?, 'user')")
-            ->execute([$name, $fbUser['email'], $avatar, $fbUser['id']]);
+        $dummyPassword = password_hash(bin2hex(random_bytes(8)), PASSWORD_DEFAULT);
+        
+        $insertStmt = $pdo->prepare("
+            INSERT INTO users (name, email, avatar, oauth_provider, oauth_uid, password, membership, role)
+            VALUES (?, ?, ?, 'facebook', ?, ?, 'starter', 'Personal')
+            RETURNING id_user
+        ");
+        
+        $insertStmt->execute([
+            $name, 
+            $fbUser['email'], 
+            $avatar, 
+            $fbUser['id'], 
+            $dummyPassword
+        ]);
+        
+        $newUserId = $insertStmt->fetchColumn();
+        
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id_user = ?");
+        $stmt->execute([$newUserId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$fbUser['email']]);
-    $user = $stmt->fetch();
 } else {
+    // Update avatar kalau user udah exist dari login facebook sebelumnya
     $pdo->prepare("UPDATE users SET avatar = ? WHERE id_user = ?")
         ->execute([$avatar, $user['id_user']]);
 }
@@ -71,5 +89,6 @@ if (!$user){
 }
 
 loginUser($user);
-header('Location: ' . APP_URL . '/dashboard.php');
+header('Location: ' . APP_URL . '/dashboard/index.php');
 exit;
+?>
