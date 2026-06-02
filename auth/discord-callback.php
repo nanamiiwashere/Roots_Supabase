@@ -55,7 +55,7 @@ $user = $stmt -> fetch();
 
 if (!$user){
     $stmt = $pdo -> prepare(
-        "INSERT INTO users (nama, email, avatar, oauth_provider, oauth_uid)
+        "INSERT INTO users (name, email, avatar, oauth_provider, oauth_uid)
         VALUES (?, ?, ?, 'discord', ?)"
     );
 
