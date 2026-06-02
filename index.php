@@ -86,7 +86,7 @@ function roots_feature_visual(string $name): string
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Roots</title>
     <meta name="description" content="Landing page ERP Roots untuk startup dan bisnis yang ingin menyatukan operasi, data, payroll, inventory, dan analytics.">
-    <link rel="icon" href="img/roots_symbol.png?v=<?= filemtime(__DIR__ . '/img/roots_symbol.png'); ?>" type="image/png">
+    <link rel="icon" href="<?= supabaseImageUrl('img/roots_symbol.png'); ?>" type="image/png">
     <link rel="stylesheet" href="style.css?v=<?= filemtime(__DIR__ . '/style.css'); ?>">
 </head>
 <body>
