@@ -678,6 +678,23 @@ $analyticsPayload = [
             });
         }
     })();
+
+    document.getElementById('workspaceLogo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        const preview = document.getElementById('logoPreview');
+        const icon = document.getElementById('uploadIcon');
+        
+        reader.onload = function(event) {
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+            icon.style.display = 'none'; // Sembunyiin icon upload pas gambar muncul
+        }
+        reader.readAsDataURL(file);
+    }
+});
+        
     </script>
 
 </body>
