@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth/auth-handler.php';
 require_once __DIR__ . '/auth/auth3thparty.php';
+require_once __DIR__ . '/handler/supabase-img.php';
 
 $currentUser = currentUser();
 
