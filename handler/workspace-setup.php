@@ -2,6 +2,8 @@
 // Handle workspace setup submission
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/supabase-handler.php';
+require_once __DIR__ . '/../auth/auth-handler.php';
+require_once __DIR__ . '/../auth/auth3thparty.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
