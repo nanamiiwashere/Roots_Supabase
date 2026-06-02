@@ -41,14 +41,13 @@ try {
         
         if (in_array($fileType, $allowedTypes)) {
             $extension = $fileType === 'image/jpeg' ? 'jpg' : 'png';
-            $fileName = 'workspace_' . $userId . '_' . time() . '.' . $extension;
+            // Tambahin prefix 'workspaces/' di sini biar dia masuk folder
+            $fileName = 'workspaces/workspace_' . $userId . '_' . time() . '.' . $extension;
             
-            // Eksekusi upload pakai Supabase Handler
             $uploadUrl = uploadToSupabase($_FILES['workspace_logo']['tmp_name'], $fileName, SUPABASE_BUCKET);
             
             if ($uploadUrl) {
-                // Cukup simpan nama file-nya aja ke database
-                $logoPath = $fileName;
+                $logoPath = $fileName; // Path ini yang kesimpen ke DB: 'workspaces/workspace_...jpg'
             }
         }
     }
