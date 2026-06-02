@@ -73,10 +73,9 @@ if (isset($pdo) && isset($currentUser['id_user'])) {
     </button>
 
     <!-- Brand / Logo -->
-            <a class="dashboard-brand" href="index.php" aria-label="Roots dashboard">
-                <img src="../img/roots_brand.png" alt="Roots" class="brand-logo brand-expanded">
-                <img src="../img/Roots.png" alt="Roots" class="brand-logo brand-collapsed">
-                <span class="dashboard-brand-text"></span>
+            <a class="dashboard-brand" href="index.php">
+                <img src="<?= supabaseImageUrl('img/roots_brand.png'); ?>" alt="Roots" class="brand-logo brand-expanded">
+                <img src="<?= supabaseImageUrl('img/Roots.png'); ?>" alt="Roots" class="brand-logo brand-collapsed">
             </a>
 
     <!-- Organization Selector -->
@@ -84,21 +83,16 @@ if (isset($pdo) && isset($currentUser['id_user'])) {
         <p>Workspace</p>
         <div class="org-selector-wrap">
             <button type="button" class="org-selector" id="workspaceToggle">
-                <img src="<?= htmlspecialchars($workspaceLogo, ENT_QUOTES, 'UTF-8'); ?>" alt="" class="org-avatar">
+                <img src="<?= supabaseImageUrl($workspace['logo'] ?? 'img/roots_symbol.png'); ?>" alt="" class="org-avatar">
                 <strong><?= htmlspecialchars($workspaceName, ENT_QUOTES, 'UTF-8'); ?></strong>
                 <i aria-hidden="true"></i>
             </button>
             <!-- Workspace Dropdown -->
             <div class="workspace-dropdown" id="workspaceDropdown">
                 <?php if (!empty($userWorkspaces)): ?>
-                    <?php foreach ($userWorkspaces as $ws): ?>
+                      <?php foreach ($userWorkspaces as $ws): ?>
                         <div class="dropdown-item <?= ($workspace && $workspace['id'] === $ws['id']) ? 'is-active' : ''; ?>" data-workspace-id="<?= $ws['id']; ?>">
-                            <?php 
-                            $wsLogo = !empty($ws['logo']) 
-                                ? (strpos($ws['logo'], 'uploads/') === 0 ? '../' . $ws['logo'] : $ws['logo'])
-                                : '../img/roots_symbol.png';
-                            ?>
-                            <img src="<?= htmlspecialchars($wsLogo, ENT_QUOTES, 'UTF-8'); ?>" alt="" class="org-avatar" style="width:24px;height:24px;">
+                            <img src="<?= supabaseImageUrl($ws['logo'] ?? 'img/roots_symbol.png'); ?>" alt="" class="org-avatar" style="width:24px;height:24px;">
                             <strong><?= htmlspecialchars($ws['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                         </div>
                     <?php endforeach; ?>
