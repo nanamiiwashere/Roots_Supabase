@@ -38,39 +38,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $name = trim($_POST['name'] ?? '');
                 $phone = trim($_POST['phone'] ?? '');
                 
+                // Bersihin phone: buang semua karakter non-angka
+                $phoneClean = preg_replace('/[^0-9]/', '', $phone);
+                if ($phoneClean === '') $phoneClean = null;
+            
                 if (empty($name)) {
                     throw new Exception('Name is required');
                 }
                 
+                // Update DB
                 $stmt = $pdo->prepare('UPDATE users SET name = ?, phone = ? WHERE id_user = ?');
-                $stmt->execute([
-                    $name, 
-                    (!empty($phone) ? $phone : null), 
-                    (int)$currentUser['id_user']
-                ]);
-                            
-                // Update session so name change is reflected immediately
+                $stmt->execute([$name, $phoneClean, (int)$currentUser['id_user']]);
+                
                 $_SESSION['user_name'] = $name;
                 
                 // Handle avatar upload
-                if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    if ($_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+                        throw new Exception('Upload error code: ' . $_FILES['avatar']['error']);
+                    }
+            
                     $fileExt = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-                    $allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // Tambah webp sesuai array lu
+                    $allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                     
                     if (in_array($fileExt, $allowedExt)) {
-                        $fileName = 'avatar_' . $currentUser['id_user'] . '_' . time() . '.' . $fileExt;
+                        $fileName = 'avatars/avatar_' . $currentUser['id_user'] . '_' . time() . '.' . $fileExt;
                         
-                        // Eksekusi upload pakai Supabase Handler
+                        // Upload
                         $uploadUrl = uploadToSupabase($_FILES['avatar']['tmp_name'], $fileName, SUPABASE_BUCKET);
                         
                         if ($uploadUrl) {
-                            // Simpan nama file-nya aja ke database
                             $stmt = $pdo->prepare('UPDATE users SET avatar = ? WHERE id_user = ?');
                             $stmt->execute([$fileName, $currentUser['id_user']]);
-                            
-                            // Update session
                             $_SESSION['user_avatar'] = $fileName;
+                        } else {
+                            // INI BIAR LU TAU KENAPA GAGAL
+                            error_log("Supabase Upload Failed for user " . $currentUser['id_user']);
+                            throw new Exception('Failed to upload image to storage.');
                         }
+                    } else {
+                        throw new Exception('Invalid file type.');
                     }
                 }
                                         
