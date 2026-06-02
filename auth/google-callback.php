@@ -2,7 +2,7 @@
 
 session_start();
 require_once '../connect.php';
-require_once '../Auth/auth3thparty.php';
+require_once '../auth/auth3thparty.php';
 
 $code = $_GET['code'] ?? '';
 if (!$code) { 
