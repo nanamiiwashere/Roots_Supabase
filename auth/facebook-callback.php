@@ -53,7 +53,7 @@ if (!$user){
         $pdo->prepare("UPDATE users SET avatar = ?, oauth_provider = 'facebook', oauth_uid = ? WHERE id_user = ?")
             ->execute([$avatar, $fbUser['id'], $user['id_user']]);
     } else {
-        $pdo->prepare("INSERT INTO users (nama, email, avatar, oauth_provider, oauth_uid, role) VALUES (?, ?, ?, 'facebook', ?, 'user')")
+        $pdo->prepare("INSERT INTO users (name, email, avatar, oauth_provider, oauth_uid, role) VALUES (?, ?, ?, 'facebook', ?, 'user')")
             ->execute([$name, $fbUser['email'], $avatar, $fbUser['id']]);
     }
 
