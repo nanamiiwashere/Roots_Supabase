@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$name, $phoneClean, (int)$currentUser['id_user']]);
                 
                 $_SESSION['user_name'] = $name;
+                $_SESSION['user_phone'] = $phoneClean;
                 
                 // Handle avatar upload
                 if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
