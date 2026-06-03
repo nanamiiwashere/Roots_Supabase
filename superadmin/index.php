@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../connect.php';
+require_once __DIR__ . '/../auth/auth-handler.php';
+require_once __DIR__ . '/../auth/auth3thparty.php';
 
 // Auth check - must be logged in as admin
 if (!isset($_SESSION['user_id'])) {
