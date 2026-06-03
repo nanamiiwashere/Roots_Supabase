@@ -94,9 +94,9 @@ if (isset($pdo) && isset($currentUser['id_user'])) {
                     <?php foreach ($userWorkspaces as $ws): ?>
                         <div class="dropdown-item <?= ($workspace && $workspace['id'] === $ws['id']) ? 'is-active' : ''; ?>" data-workspace-id="<?= $ws['id']; ?>">
                             <?php 
-                            $wsLogo = !empty($ws['logo']) 
-                                ? (strpos($ws['logo'], 'uploads/') === 0 ? '../' . $ws['logo'] : $ws['logo'])
-                                : '../img/roots_symbol.png';
+                                $wsLogo = !empty($ws['logo']) 
+                                    ? supabaseImageUrl($ws['logo'])
+                                    : '../img/roots_symbol.png';
                             ?>
                             <img src="<?= htmlspecialchars($wsLogo, ENT_QUOTES, 'UTF-8'); ?>" alt="" class="org-avatar" style="width:24px;height:24px;">
                             <strong><?= htmlspecialchars($ws['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
