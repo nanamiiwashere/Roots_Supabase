@@ -2995,6 +2995,10 @@ body.workspace-setup-open {
     transition: all 0.2s;
     white-space: nowrap;
     min-width: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
 }
 
 .setup-back:hover {
