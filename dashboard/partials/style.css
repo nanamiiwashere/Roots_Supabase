@@ -2621,20 +2621,22 @@ body.workspace-setup-open {
     overflow: hidden; /* Biar background hijau ga keluar dari lengkungan */
 }
 
-/* KIRI: SIDEBAR HIJAU */
+
 .workspace-setup-side {
     width: 320px;
-    background: #26C281; /* Warna hijau khas mockup */
+    background: #26C281;
     padding: 45px 40px;
     color: #ffffff;
     display: flex;
     flex-direction: column;
 }
 .workspace-setup-side img {
-    height: 34px;
+    height: 36px; 
     width: auto;
     margin-bottom: 35px;
     display: block;
+    align-self: flex-start; 
+    object-fit: contain;
 }
 .workspace-setup-side h2 {
     font-size: 34px;
@@ -2677,6 +2679,11 @@ body.workspace-setup-open {
     border: 1px solid rgba(255, 255, 255, 0.5);
     font-size: 11px;
 }
+
+.setup-progress li strong {
+    font-weight: 600;
+}
+
 .setup-progress li.is-active span {
     background: #ffffff;
     color: #26C281;
