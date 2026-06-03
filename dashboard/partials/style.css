@@ -3528,6 +3528,7 @@ body.workspace-setup-open {
     font-weight: 600;
     color: #1f2730;
     white-space: nowrap;
+    text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: opacity 300ms ease;
