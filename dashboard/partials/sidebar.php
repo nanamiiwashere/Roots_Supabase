@@ -156,14 +156,18 @@ if (isset($pdo) && isset($currentUser['id_user'])) {
                 <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8'); ?>" alt="User avatar" class="user-profile-avatar">
                 
                 <?php
-                // Karena nama kolom lu 'oauth_provider', dan kalau email itu isinya NULL,
-                // Kita pake '??' biar kalau NULL otomatis dianggep 'email'.
-                $provider = strtolower($currentUser['oauth_provider'] ?? 'email');
+                // Cek apakah 'oauth_provider' udah ke-load dari session/auth-handler
+                $dbProvider = $currentUser['oauth_provider'] ?? null;
                 
-                // Buat jaga-jaga kalau disimpen sebagai string kosong "" alih-alih NULL
-                if (empty($provider)) {
-                    $provider = 'email';
+                // Kalau datanya kosong (karena query auth-handler kurang lengkap), kita tarik manual dari DB
+                if ($dbProvider === null && isset($pdo) && isset($currentUser['id_user'])) {
+                    $stmt = $pdo->prepare("SELECT oauth_provider FROM users WHERE id_user = ?");
+                    $stmt->execute([$currentUser['id_user']]);
+                    $dbProvider = $stmt->fetchColumn();
                 }
+
+                // Format datanya, kalau beneran NULL atau kosong, jadikan 'email'
+                $provider = strtolower($dbProvider ?: 'email');
 
                 $providerTitle = ucfirst($provider) . ' Login';
                 $iconSvg = '';
